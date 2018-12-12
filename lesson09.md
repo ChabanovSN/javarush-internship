@@ -8,9 +8,10 @@
 ### ![error](https://cloud.githubusercontent.com/assets/13649199/13672935/ef09ec1e-e6e7-11e5-9f79-d1641c05cbe6.png) Правка
 
 #### Apply 9_0_fix.patch
-> - Из за [баги в FireFox](https://bugzilla.mozilla.org/show_bug.cgi?id=884693) при пустом ответе от Ajax в консоль браузера выводится:
-`Ошибка синтаксического анализа XML: корневой элемент не найден`. Лечится `@ResponseStatus(value = HttpStatus.NO_CONTENT)`.
-> - Уменьшил отступы у навигационной панели. См. [Bootstrap Spacing](https://getbootstrap.com/docs/4.1/utilities/spacing/)
+> - Обновил JavaScript:
+>   - [Заменил `var` на `let`/`const`](https://learn.javascript.ru/let-const)(в IDEA нужно поменять версию JavaScript через `Alt+Enter`). Синтакс поддерживается [95% браузеров](https://caniuse.com/#feat=const). На каждом конкретном проекте поддерживаемые версии браузеров определяются бизнесом.
+>   - [Заменил depricated `success` на `done()`](http://api.jquery.com/jquery.ajax/#jqXHR)
+> - Поправил ресурсы и UI
 
 ## ![hw](https://cloud.githubusercontent.com/assets/13649199/13672719/09593080-e6e7-11e5-81d1-5cb629c438ca.png) Разбор домашнего задания HW8
 
@@ -21,7 +22,6 @@
 > - Все события сделал через `onlick`
 > - Фильтр еды сделал в [Bootstrap 4 Cards](https://getbootstrap.com/docs/4.1/components/card/)
 > - Удалил лишние классы, JSP и i18N
-> - Вместо глабальных переменных `ajaxUrl`, `datatableApi` и одинаковой функции обновления таблицы `updateTable()` задаю их в объекте контекст, который передаю в `makeEditable()` как параметр  
 
 - [Bootstrap forms](https://getbootstrap.com/docs/4.1/components/forms/)
 - [Grid system](https://getbootstrap.com/docs/4.1/layout/grid/)
@@ -38,7 +38,7 @@
 ###  ![video](https://cloud.githubusercontent.com/assets/13649199/13672715/06dbc6ce-e6e7-11e5-81a9-04fbddb9e488.png) 2. <a href="https://drive.google.com/open?id=0B9Ye2auQ_NsFV0VKY2FGbndGMTQ">HW8 Optional (enable/disable user)</a>
 
 #### Apply 9_03_HW8_enable_disable.patch
-> - Перенес метод `enable` в `topjava.users.js` и сделал стиль для пользователей через атрибут `data-userEnabled`
+> - Перенес метод `enable` в `userDatatables.js` и сделал стиль для пользователей через атрибут `data-userEnabled`
 > - Меняю стиль `<tr>` ПОСЛЕ успешной обработки запроса через `data-userEnabled`, при ошибке возвращаю `checked` в прежнее состояние
 > - Убрал `init()`. При переводе таблицы на Ajax вместо него будет `createdRow`. Атрибуты `data-userEnabled` добавляются при отрисовки таблицы в JSP
 
@@ -69,8 +69,7 @@
 
 ### ![video](https://cloud.githubusercontent.com/assets/13649199/13672715/06dbc6ce-e6e7-11e5-81a9-04fbddb9e488.png) 6.  <a href="https://drive.google.com/open?id=0B9Ye2auQ_NsFcW1qeTVFdS1BdHM">Перевод DataTables на Ajax</a>
 #### Apply 9_07_datatable_via_ajax.patch
-> - Перешли на [параметры Datatables в формате 1.10](https://datatables.net/upgrade/1.10-convert)
-> - В `makeEditable()` больше нет манипуляций c DOM, которые требуются делать ПОСЛЕ отработки плагина `datatable`, поэтому нам не обязательно вызывать ее в коллбэке `initComplete`.   
+> Перешли на [параметры Datatables в формате 1.10](https://datatables.net/upgrade/1.10-convert)
 
 -  [DataTables Ajax](https://datatables.net/manual/ajax)
 
@@ -107,7 +106,6 @@
 > Рефакторинг
 > - В `login.jsp` вместо атрибутов достаю параметры запроса (`param.error/message`).
 > - Закрыл доступ к `/login` для уже авторизованных в приложении пользователей (в `spring-security.xml` изменил `permitAll` на `isAnonymous`)
-> - При нажании кнопок `Зайти как ...` сделал вход в приложение 
 
 -  <a href="https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#ns-form-and-basic">Собственный form-login</a>
 
@@ -160,7 +158,7 @@
 ## ![hw](https://cloud.githubusercontent.com/assets/13649199/13672719/09593080-e6e7-11e5-81d1-5cb629c438ca.png) Домашнее задание HW9
 
 - 1: Реализовать для meal Binding/ Update/ Validation. Проверить работу при пустом значении `calories`.
-- 2: Перевести `meals.jsp` на работу по ajax. Стиль строки таблицы сделать в зависимости от `excess`, время отображать без `T`. Добавить i18n.
+- 2: Перевести `meals.jsp` на работу по ajax. Стиль строки таблицы сделать в зависимости от `exceeded`, время отображать без `T`. Добавить i18n.
 - 3: Починить meals тесты, добавить тест на неавторизованный доступ
 
 #### Optional

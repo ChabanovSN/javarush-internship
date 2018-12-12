@@ -5,16 +5,10 @@
 - **Браузер кэширует javascript и css. Если изменения не работают, обновите приложение в браузере (в хроме `Ctrl+F5`)**
 - **При удалении файлов не забывайте делать clean: `mvn clean`**
 
-### ![error](https://cloud.githubusercontent.com/assets/13649199/13672935/ef09ec1e-e6e7-11e5-9f79-d1641c05cbe6.png) Правка и рефакторинг
+### ![error](https://cloud.githubusercontent.com/assets/13649199/13672935/ef09ec1e-e6e7-11e5-9f79-d1641c05cbe6.png) Правка
 
-#### Apply 8_0_1_fix.patch
-> - Небольшая правка кода
-
-#### Apply 8_0_2_test_refactoring.patch
-
-> - Рефакторинг тестов
->   - `RootControllerTest`: вместо сравнения по полям можно использовать наш `UserTestData.assertMatch` с помощью `AssertionMatcher` адаптера. Методы сравнения по полям в `hamcrest-all` больше не нужны, заменил на `hamcrest-core`.
->   - Вместо сериализации ожидаемых объектов в json и сравнение с ответом в MVC через `content().json()` красивее десериализовать ответ в объект и сравнивать уже объекты через наши `assertMatch` c учетом игнорируемых полей. `jsonassert` становится не нужен.  
+#### Apply 8_0_fix.patch
+> Небольшая правка кода
 
 ## ![hw](https://cloud.githubusercontent.com/assets/13649199/13672719/09593080-e6e7-11e5-81d1-5cb629c438ca.png) Разбор домашнего задания HW7
 
@@ -22,7 +16,7 @@
 
 #### Apply 8_01_HW07_controller_test.patch
 > В `RootControllerTest.testMeals()` сделал проверку через `model().attribute("meals", expectedValue)`.
-  Сравнение происходит через `MealTo.equals()`, который мы можем переопределить, т.к. он Transfer Object, не является сущностью (Entity).
+  Сравнение происходит через `MealWithExceed.equals()`, который мы можем переопределить, т.к. это TO (Transfer Object) и не является сущностью (Entity).
 ------------------
 - [Persistent classes implementing equals and hashcode](https://access.redhat.com/documentation/en-us/jboss_enterprise_application_platform/4.3/html/hibernate_reference_guide/persistent_classes-implementing_equals_and_hashcode): переопределять `equals()/hashCode()` необходимо, если
   - использовать Entity в `Set` (рекомендовано для many ассоциаций), либо как ключи в `HashMap`
@@ -32,7 +26,8 @@
 ------------------------
 
 #### Apply 8_02_HW07_rest_controller.patch
-> - Как и для юзера сериализуем json ответ контроллера и сравниваем через `ResultMatcher`. Для `MealTo` используем в сравнении `isEqualTo`.  
+> - Делаем сравнения через `JSONAssert`
+> - Вынес дженерик методы `contentJson() / contentJsonArray()` в `TestUtil`. Они будут общими для всех и пригодятся, если сущностей в проекте будет больше 2х.
 
 ### ![video](https://cloud.githubusercontent.com/assets/13649199/13672715/06dbc6ce-e6e7-11e5-81a9-04fbddb9e488.png) 2. <a href="https://drive.google.com/open?id=0B9Ye2auQ_NsFLXZ3OHdac18yZlk">HW7_Optional</a>
 #### Apply 8_03_HW07_formatters.patch
@@ -85,8 +80,7 @@
  JSP полезны, если надо с сервера отдать статический html с серверной логикой (условия, циклы), сформированный на основе модели. Для динамической отрисовки таблицы мы будем использовать REST и JSON на 9м уроке (работа с datatables через Ajax).
 
 #### Apply 8_07_ajax_datatables.patch
-> - Переименовал js скрипты по [javascript filename naming convention](https://stackoverflow.com/questions/7273316/what-is-the-javascript-filename-naming-convention)
-> - Сделал загрузку скриптов асинхронной (и все общие скрипты в `headTag.jsp`). Для асинхронной загрузки <a href="http://stackoverflow.com/a/41947330/548473">вынес скрипт</a> из `users.jsp` в `topjava.users.js`.
+> - Сделал загрузку скриптов асинхронной (и все общие скрипты в `headTag.jsp`). Для асинхронной загрузки <a href="http://stackoverflow.com/a/41947330/548473">вынес скрипт</a> из `users.jsp` в `userDatatables.js`.
 >   - [Внешние скрипты, порядок исполнения](https://learn.javascript.ru/external-script)
 >   - <a href="http://stackoverflow.com/questions/436411/where-should-i-put-script-tags-in-html-markup/24070373#24070373">JavaScript loading modern approach</a>
 > - Добавил `dataTables.bootstrap4.js/css`
@@ -109,12 +103,8 @@
 -  <a href="http://bootstrap-ru.com/203/javascript.php">Javascript плагины для Bootstrap</a>
 -  <a href="http://datatables.net/reference/api/">DataTables API</a>
 
-#### Apply 8_08_update_js.patch
->  - [Заменил `var` на `let`/`const`](https://learn.javascript.ru/let-const)(в IDEA нужно поменять версию JavaScript через `Alt+Enter`). Синтакс поддерживается [95% браузеров](https://caniuse.com/#feat=const). На каждом конкретном проекте поддерживаемые версии браузеров определяются бизнесом.
->  - [В `jquery.ajax` заменил depricated `success` на `done()`](http://api.jquery.com/jquery.ajax/#jqXHR)
-
 ##  ![video](https://cloud.githubusercontent.com/assets/13649199/13672715/06dbc6ce-e6e7-11e5-81a9-04fbddb9e488.png) 6. <a href="https://drive.google.com/open?id=0B9Ye2auQ_NsFMTVWaXdWRUZsUEE"> Notifications</a>
-#### Apply 8_09_notification.patch
+#### Apply 8_08_notification.patch
 > - Сделал [защиту от кэширование ajax запросов в IE](https://stackoverflow.com/a/4303862/548473)
 > - Обновил API Noty (3.x), добавил в сообщения font-awesome
 > - [Tomcat 8.5.x перестал отдавать в заголовке `statusText`](http://tomcat.apache.org/tomcat-8.5-doc/changelog.html). Отображаем просто `status`
@@ -130,9 +120,7 @@
 >  - В Spring Security 5.x по умолчанию пароль кодируется. Выключил, включим на 10-м занятии.
 >    - [Adding a Password Encoder](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#ns-password-encoder)
 
-#### Apply 8_10_add_security.patch
-> ![question](https://cloud.githubusercontent.com/assets/13649199/13672858/9cd58692-e6e7-11e5-905d-c295d2a456f1.png) почему для `spring-security` версия не `${spring.version}' (5.1.2.RELEASE) ?
- 
+#### Apply 8_09_add_security.patch
 -  <a href="http://projects.spring.io/spring-security/">Spring Security</a>
 -  <a href="https://ru.wikipedia.org/wiki/Протокол_AAA">Протокол AAA</a>
 -  <a href="https://ru.wikipedia.org/wiki/Аутентификация_в_Интернете">Методы аутентификации</a>.
@@ -222,6 +210,6 @@ Maven скачивает все депенденси в local repository, кот
 ---------------------
 ## ![error](https://cloud.githubusercontent.com/assets/13649199/13672935/ef09ec1e-e6e7-11e5-9f79-d1641c05cbe6.png) Подсказки по HW08
 - 1: enable/disable делать c `@Transactional` (можно реализовать как на уровне репозитория, так и на уровне сервиса через несколько sql, которые должны быть в одной транзакции)
-- 2: в `topjava.common.js` следует выносите только общие скрипты (cкрипты еды размещайте в  `mealDatatables.js`, пользователей в `topjava.users.js`)
+- 2: в `datatablesUtil.js` следует выносите только общие скрипты (cкрипты еды размещайте в  `mealDatatables.js`, пользователей в `userDatatables.js`)
 - 3: если в контроллер приходит `null` проверте в `Network` вкладке браузера в каком формате приходят данные и в каком формате в контроллере вы их принимаете (`consumes`).
 - 4: при реализации `enable/disable` лучше явно указывать нужное состояние, чем переключать на противоположное. Если параллельно вам кто-то изменит состояние, то будет несоответствие UI и DB. Не забудьте про `enable/disable` тесты.
